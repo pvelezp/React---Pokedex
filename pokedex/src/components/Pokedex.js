@@ -1,6 +1,7 @@
-import React from 'react'
-import { AppBar, Toolbar, Grid, Card, CardContent} from "@material-ui/core"
+import React, {useState} from 'react'
+import { AppBar, Toolbar, Grid, Card, CardMedia, CardContent, CircularProgress} from "@material-ui/core"
 import {makeStyles} from "@material-ui/core/styles"
+import testData from "../testData"
 
 const useStyles = makeStyles({
     pokedexContainer: {
@@ -10,19 +11,29 @@ const useStyles = makeStyles({
     }
 })
 
-const getPokemonCard = () => {
-    return (
-        <Grid item xs={4}  >
-        <Card>
-            <CardContent>Hi</CardContent>
-        </Card>
-    </Grid>
-    )
-
-}
-
 const Pokedex = () => {
     const classes = useStyles()
+    const [pokemonData, setPokemonData] = useState(testData)
+
+    const getPokemonCard = (pokemonId) => {
+        const {id, name} = pokemonData[`${pokemonId}`]
+        const sprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+
+        return (
+            <Grid item xs={4} key={pokemonId} >
+            <Card>
+            <CardMedia 
+            className={classes.CardMedia}
+            image={sprite}
+            style = {{width: "130px", height: "130px"} }
+            />
+
+                <CardContent>Hi</CardContent>
+            </Card>
+        </Grid>
+        )
+    
+    }
     return (
         <>
     <AppBar position="static">
@@ -30,13 +41,15 @@ const Pokedex = () => {
 
 
     </AppBar>
-        <Grid container spacing={3} className={classes.pokedexContainer}>
+        {pokemonData ? (
+            <Grid container spacing={3} className={classes.pokedexContainer}>
 
-        {getPokemonCard()}
-        {getPokemonCard()}
-        {getPokemonCard()}
-        {getPokemonCard()}
-        </Grid>
+            {Object.keys(pokemonData).map(pokemonId => 
+                getPokemonCard(pokemonId))}
+            </Grid>
+        ) : (
+            <CircularProgress />
+        )}
 
 
         </>
